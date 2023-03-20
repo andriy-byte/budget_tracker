@@ -11,7 +11,6 @@ struct User{
     std::size_t id;
     std::string full_name;
     std::string nick_name;
-    std::string password;
 
 };
 
@@ -22,9 +21,14 @@ struct BudgetGroup{
 
 struct BudgetInfo{
     std::size_t id;
-    std::string last_update;
-
+    double money;
+    std::string date_time;
 };
 
+struct Permission{
+    std::size_t user_id;
+    std::string password;
+
+};
 
 #endif //BUDGET_TRACKER_DATABASETABLES_H

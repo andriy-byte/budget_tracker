@@ -13,20 +13,15 @@ message(STATUS "Project source directory ${PROJECT_SOURCE_DIR}")
 add_executable(budget_tracker main.cpp
         src/db/IDataBase.h
         src/db/DatabaseTables.h
-        src/db/DataBaseUser.cpp
-        src/db/DataBaseUser.h
+        src/db/SqliteDataBaseService.cpp
+        src/db/SqliteDataBaseService.h
         src/Paths.cpp
         src/Paths.h
         src/Exception.cpp
         src/Exception.h
-        src/Singleton.cpp
         src/Singleton.h
-        src/db/DataBaseBudgetGroup.cpp
-        src/db/DataBaseBudgetGroup.h
-        src/db/DataBaseBudgetInfo.cpp
-        src/db/DataBaseBudgetInfo.h
-        src/db/DataBaseConnector.cpp
-        src/db/DataBaseConnector.h)
+        src/db/SqliteDataBaseConnector.cpp
+        src/db/SqliteDataBaseConnector.h)
 
 
 if (WIN32)
