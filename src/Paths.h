@@ -5,8 +5,8 @@
 
 #include <filesystem>
 
-namespace paths{
-    namespace db{
+namespace paths {
+    namespace db {
         const extern std::filesystem::path app_db;
     }
 }

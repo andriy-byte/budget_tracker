@@ -4,28 +4,26 @@
 #define BUDGET_TRACKER_DATABASETABLES_H
 
 
-
 #include<string>
 
-struct User{
+struct User {
     std::size_t id;
-    std::string full_name;
-    std::string nick_name;
+    std::string name;
 
 };
 
-struct BudgetGroup{
+struct BudgetGroup {
     std::size_t id;
     std::size_t user_id;
 };
 
-struct BudgetInfo{
+struct BudgetInfo {
     std::size_t id;
     double money;
     std::string date_time;
 };
 
-struct Permission{
+struct Permission {
     std::size_t user_id;
     std::string password;
 

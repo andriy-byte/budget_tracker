@@ -5,16 +5,18 @@
 
 #include <memory>
 
-template <class T>
+template<class T>
 class Singleton {
 public:
-    Singleton(Singleton&)=delete;
+    Singleton(Singleton &) = delete;
 
-    void operator=(const Singleton&)=delete;
+    void operator=(const Singleton &) = delete;
 
-    static T& getInstance();
+    static T &getInstance();
+
 protected:
-    Singleton()=default;
+    Singleton() = default;
+
 private:
     static std::unique_ptr<T> instance;
     static std::mutex mutex_;
@@ -28,7 +30,7 @@ template<class T>
 std::mutex Singleton<T>::mutex_;
 
 template<class T>
-T& Singleton<T>::getInstance() {
+T &Singleton<T>::getInstance() {
     std::lock_guard<std::mutex> lock(mutex_);
     static const std::unique_ptr<T> instance{new T{}};
     return *instance;

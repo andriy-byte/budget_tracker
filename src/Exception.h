@@ -20,11 +20,11 @@ public:
     virtual std::string what();
 
     Exception(const boost::source_location &location,
-                 istr::StringInterpolation exceptionMessage);
+              istr::StringInterpolation exceptionMessage);
 
     Exception();
 
-    [[nodiscard]] const boost::source_location & getLocation() const noexcept;
+    [[nodiscard]] const boost::source_location &getLocation() const noexcept;
 
     [[nodiscard]] const istr::StringInterpolation &getExceptionMessage() const noexcept;
 
