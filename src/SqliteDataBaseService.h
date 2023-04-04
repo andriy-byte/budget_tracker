@@ -22,19 +22,7 @@ class SqliteDataBaseService final : public Singleton<SqliteDataBaseService<BT, I
                                     public IDataBaseSelectID<BT, ID>,
                                     public IDateBaseSelect<BT> {
 
-public:
-/*
-    void connect() noexcept(false) override;
-    void create() noexcept(false) override;
-    void drop() noexcept(false) override;
-    void insert(const BT &bt) noexcept(false) override;
-    void update(const ID &id, const BT &bt) noexcept(false) override;
-    const BT &get(const ID &id) noexcept(false) override;
-    void erase(const ID &id) noexcept(false) override;
-    std::vector<BT> getAll() noexcept(false) override;
-    std::size_t getRowsQuantity() noexcept(false) override;
-*/
-private:
+protected:
     SqliteDataBaseService() = default;
 
 };
@@ -64,7 +52,8 @@ public:
     std::vector<User> getAll() noexcept(false) override;
 
     std::size_t getRowsQuantity() noexcept(false) override;
-    std::size_t getId(const std::string& name);
+
+    std::size_t getId(const std::string &name);
 
     SqliteDataBaseService() = default;
 

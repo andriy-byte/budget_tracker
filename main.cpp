@@ -1,10 +1,8 @@
-#include <iostream>
-#include <filesystem>
 
+#include "src/Session.h"
 
 int main(){
 
-    std::cout<<std::filesystem::current_path();
-
+    Session::run();
     return 0;
 }

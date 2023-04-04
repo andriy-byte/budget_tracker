@@ -1,6 +1,4 @@
-//
-// Created by andriy on 3/25/23.
-//
+
 
 #ifndef BUDGET_TRACKER_AUTHORIZATION_H
 #define BUDGET_TRACKER_AUTHORIZATION_H

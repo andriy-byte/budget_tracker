@@ -1,6 +1,4 @@
-//
-// Created by andriy on 3/25/23.
-//
+
 
 #include "Authorization.h"
 

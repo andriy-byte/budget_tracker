@@ -21,7 +21,17 @@ add_executable(budget_tracker main.cpp
         src/Exception.h
         src/Singleton.h
         src/SqliteDataBaseConnector.cpp
-        src/SqliteDataBaseConnector.h src/App.cpp src/App.h src/Authorization.cpp src/Authorization.h src/Login.cpp src/Login.h)
+        src/SqliteDataBaseConnector.h
+        src/Authorization.cpp
+        src/Authorization.h
+        src/Authentication.cpp
+        src/Authentication.h
+        src/Session.cpp
+        src/Session.h
+        src/Commands.h
+        src/Commands.cpp
+        src/PasswordInput.h
+        src/PasswordInput.cpp src/Attempt.cpp src/Attempt.h)
 
 
 if (WIN32)

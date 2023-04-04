@@ -113,7 +113,7 @@ std::size_t SqliteDataBaseService<User, std::size_t>::getRowsQuantity() noexcept
     } SQLITE_DEFAULT_EXCEPTION
 }
 
-std::size_t SqliteDataBaseService<User, std::size_t>::getId(const std::string& name) {
+std::size_t SqliteDataBaseService<User, std::size_t>::getId(const std::string &name) {
     try {
         std::size_t id;
         SqliteDataBaseConnector::get()
