@@ -1,5 +1,6 @@
 
 
+#include <boost/lexical_cast.hpp>
 #include "Session.h"
 
 const std::string session_info::help(
@@ -109,18 +110,59 @@ void Session::run() {
     fmt::print(fmt::runtime(session_info::help));
 
     while (!boost::regex_match(command, commands::exit)) {
+        fmt::print(input_style, session_info::input_line);
+        std::cin >> command;
         if (boost::regex_match(command, commands::income)) {
+            fmt::print(input_style, "input money quantity :");
+            double money;
+            std::cin >> money;
+            Datetime datetime;
+            sql_budget_info::getInstance().insert(
+                    BudgetInfo{
+                            .id=current_user_id,
+                            .money=money,
+                            .date_time=datetime.now()
+                    });
 
         } else if (boost::regex_match(command, commands::show)) {
-
+            BudgetInfo budget_info = sql_budget_info::getInstance().get(current_user_id);
+            fmt::print(input_style, "Money quantity : {}", budget_info.money);
+            fmt::print(input_style, "Latest modification : {}", budget_info.date_time);
         } else if (boost::regex_match(command, commands::report)) {
+            std::string from, to;
+            fmt::print(input_style, "from date time (yyyy-mm-dd) : ");
+            std::cin >> from;
+            fmt::print(input_style, "to date time (yyyy-mm-dd) : ");
+            std::cin >> to;
 
-        } else if (boost::regex_match(command, commands::logout)) {
+            boost::gregorian::date from_date, to_date;
+            try {
+                from_date = boost::gregorian::date_from_iso_string(boost::replace_all_copy(from, "-", ""));
+                to_date = boost::gregorian::date_from_iso_string(boost::replace_all_copy(to, "-", ""));
+            } catch (std::out_of_range &e) {
+                fmt::print("{}", e.what());
+                break;
+            }
+
+            for (auto &i: sql_budget_info::getInstance().getBetweenDatesById(current_user_id, to_sql_string(from_date),
+                                                                             to_sql_string(to_date))) {
+                fmt::print(input_style, "Money status : {}\n", i.money);
+                fmt::print(input_style, "Date of modification : {}\n", i.date_time);
+
+            }
 
         } else if (boost::regex_match(command, commands::help)) {
-
+            fmt::print("{}", session_info::help);
         } else if (boost::regex_match(command, commands::costs)) {
+            BudgetInfo budget_info = sql_budget_info::getInstance().get(current_user_id);
+            double costs;
+            Datetime datetime;
+            fmt::print(input_style,"Input costs : ");
+            std::cin>>costs;
+            sql_budget_info::getInstance().insert(BudgetInfo{.money = budget_info.money-costs,.date_time=datetime.now()});
 
+        } else {
+            fmt::print(input_style, "Don't exists command {}", command);
         }
     }
 

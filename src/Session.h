@@ -8,6 +8,8 @@
 #include "PasswordInput.h"
 #include "Authentication.h"
 #include "Attempt.h"
+#include "Datetime.h"
+#include <string_interpolation.h>
 #include <memory>
 #include <fmt/color.h>
 #include <fmt/printf.h>
@@ -15,6 +17,8 @@
 #include <cstdlib>
 #include <chrono>
 #include <thread>
+#include <boost/date_time/gregorian/gregorian.hpp>
+#include <boost/algorithm/string.hpp>
 
 namespace session_info {
     const extern std::string help;

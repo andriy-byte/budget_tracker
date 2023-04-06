@@ -34,6 +34,8 @@ struct IDataBaseSelectID {
 
     virtual const BT &get(const ID &) noexcept(false) = 0;
 
+    virtual const std::vector<BT> getAll(const ID &) noexcept(false) = 0;
+
     virtual void erase(const ID &) noexcept(false) = 0;
 };
 

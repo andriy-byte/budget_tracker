@@ -57,6 +57,9 @@ public:
 
     SqliteDataBaseService() = default;
 
+    const std::vector<User> getAll(const size_t &id) noexcept(false) override;
+
+
 };
 
 template<>
@@ -85,6 +88,8 @@ public:
     std::vector<BudgetGroup> getAll() noexcept(false) override;
 
     std::size_t getRowsQuantity() noexcept(false) override;
+
+    const std::vector<BudgetGroup> getAll(const size_t &id) noexcept(false) override;
 
 private:
     SqliteDataBaseService() = default;
@@ -118,7 +123,11 @@ public:
 
     std::size_t getRowsQuantity() noexcept(false) override;
 
-private:
+    const std::vector<BudgetInfo> getAll(const size_t &id) noexcept(false) override;
+
+    const std::vector<BudgetInfo>
+    getBetweenDatesById(std::size_t id, const std::string &from, const std::string &to) noexcept(false);
+
     SqliteDataBaseService() = default;
 
 };
@@ -149,6 +158,8 @@ public:
     std::vector<Permission> getAll() noexcept(false) override;
 
     std::size_t getRowsQuantity() noexcept(false) override;
+
+    const std::vector<Permission> getAll(const size_t &id) noexcept(false) override;
 
     SqliteDataBaseService() = default;
 

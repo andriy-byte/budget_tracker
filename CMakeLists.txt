@@ -31,7 +31,13 @@ add_executable(budget_tracker main.cpp
         src/Commands.h
         src/Commands.cpp
         src/PasswordInput.h
-        src/PasswordInput.cpp src/Attempt.cpp src/Attempt.h)
+        src/PasswordInput.cpp
+        src/Attempt.cpp
+        src/Attempt.h
+        src/Budget.cpp
+        src/Budget.h
+        src/Datetime.cpp
+        src/Datetime.h)
 
 
 if (WIN32)
@@ -87,44 +93,8 @@ if (Boost_FOUND)
     target_link_libraries(${PROJECT_NAME} PUBLIC ${Boost_LIBRARIES})
 endif ()
 
-find_package(range-v3 REQUIRED)
-target_link_libraries(${PROJECT_NAME} PUBLIC range-v3::range-v3)
-
-find_package(re2 REQUIRED)
-target_link_libraries(${PROJECT_NAME} PUBLIC re2::re2)
-
-find_package(folly)
-target_link_libraries(${PROJECT_NAME} PUBLIC Folly::folly)
-
-find_package(argparse REQUIRED)
-target_link_libraries(${PROJECT_NAME} PUBLIC argparse::argparse)
-
-find_package(Eigen3 REQUIRED)
-target_link_libraries(${PROJECT_NAME} PUBLIC Eigen3::Eigen)
-
-find_package(spdlog REQUIRED)
-target_link_libraries(${PROJECT_NAME} PUBLIC spdlog::spdlog)
-
-find_package(nlohmann_json REQUIRED)
-target_link_libraries(${PROJECT_NAME} PUBLIC nlohmann_json::nlohmann_json)
-
-find_package(tabulate REQUIRED)
-target_link_libraries(${PROJECT_NAME} PUBLIC tabulate::tabulate)
-
-find_package(OpenSSL REQUIRED)
-target_link_libraries(${PROJECT_NAME} PUBLIC OpenSSL::Crypto)
-
-find_package(sciplot REQUIRED)
-target_link_libraries(${PROJECT_NAME} PUBLIC sciplot::sciplot)
-
 find_package(cryptopp REQUIRED)
 target_link_libraries(${PROJECT_NAME} PUBLIC cryptopp::cryptopp)
 
-find_package(ftxui REQUIRED)
-target_link_libraries(${PROJECT_NAME} PUBLIC ftxui::dom ftxui::screen ftxui::component)
-
 find_package(SQLiteCpp REQUIRED)
 target_link_libraries(${PROJECT_NAME} PUBLIC SQLiteCpp)
-
-find_package(cpr REQUIRED)
-target_link_libraries(${PROJECT_NAME} PUBLIC cpr::cpr)

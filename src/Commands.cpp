@@ -9,7 +9,6 @@ namespace commands {
     const boost::regex costs("[Cc]osts");
     const boost::regex show("[Ss]how");
     const boost::regex report("[Rr]eport");
-    const boost::regex logout("[Ll]ogout");
     const boost::regex exit("[Ee]xit");
     const boost::regex help("[Hh]elp");
 }
