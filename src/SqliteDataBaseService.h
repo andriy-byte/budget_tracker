@@ -6,11 +6,9 @@
 
 #include "IDataBase.h"
 #include <mutex>
-#include <atomic>
 #include <memory>
 #include <exception>
-#include <SQLiteCpp/SQLiteCpp.h>
-#include "Paths.h"
+#include <boost/assert/source_location.hpp>
 #include "Exception.h"
 #include "Singleton.h"
 #include "SqliteDataBaseConnector.h"
@@ -19,7 +17,7 @@ template<BudgetTrackerTypes BT, typename ID>
 class SqliteDataBaseService final : public Singleton<SqliteDataBaseService<BT, ID>>,
                                     public IDateBaseService,
                                     public IDataBaseModificate<BT>,
-                                    public IDataBaseSelectID<BT, ID>,
+                                    public IDataBaseID<BT, ID>,
                                     public IDateBaseSelect<BT> {
 
 protected:
@@ -31,7 +29,7 @@ template<>
 class SqliteDataBaseService<User, std::size_t> final : public Singleton<SqliteDataBaseService<User, std::size_t>>,
                                                        public IDateBaseService,
                                                        public IDataBaseModificate<User>,
-                                                       public IDataBaseSelectID<User, std::size_t>,
+                                                       public IDataBaseID<User, std::size_t>,
                                                        public IDateBaseSelect<User> {
 
 public:
@@ -49,11 +47,18 @@ public:
 
     void erase(const size_t &id) noexcept(false) override;
 
+    bool exists(const size_t &id) noexcept(false) override;
+
+    bool exists(const User &bt) noexcept(false) override;
+
     std::vector<User> getAll() noexcept(false) override;
 
     std::size_t getRowsQuantity() noexcept(false) override;
 
-    std::size_t getId(const std::string &name);
+    std::size_t getId(const std::string &name) noexcept(false);
+
+    bool existsByName(const std::string &name) noexcept(false);
+
 
     SqliteDataBaseService() = default;
 
@@ -67,13 +72,17 @@ class SqliteDataBaseService<BudgetGroup, std::size_t> final
         : public Singleton<SqliteDataBaseService<BudgetGroup, std::size_t>>,
           public IDateBaseService,
           public IDataBaseModificate<BudgetGroup>,
-          public IDataBaseSelectID<BudgetGroup, std::size_t>,
+          public IDataBaseID<BudgetGroup, std::size_t>,
           public IDateBaseSelect<BudgetGroup> {
 
 public:
     void connect() noexcept(false) override;
 
     void create() noexcept(false) override;
+
+    bool exists(const size_t &id) noexcept(false) override;
+
+    bool exists(const BudgetGroup &bt) noexcept(false) override;
 
     void drop() noexcept(false) override;
 
@@ -91,7 +100,6 @@ public:
 
     const std::vector<BudgetGroup> getAll(const size_t &id) noexcept(false) override;
 
-private:
     SqliteDataBaseService() = default;
 
 };
@@ -101,7 +109,7 @@ class SqliteDataBaseService<BudgetInfo, std::size_t> final
         : public Singleton<SqliteDataBaseService<BudgetInfo, std::size_t>>,
           public IDateBaseService,
           public IDataBaseModificate<BudgetInfo>,
-          public IDataBaseSelectID<BudgetInfo, std::size_t>,
+          public IDataBaseID<BudgetInfo, std::size_t>,
           public IDateBaseSelect<BudgetInfo> {
 
 public:
@@ -110,6 +118,10 @@ public:
     void create() noexcept(false) override;
 
     void drop() noexcept(false) override;
+
+    bool exists(const size_t &id) noexcept(false) override;
+
+    bool exists(const BudgetInfo &bt) noexcept(false) override;
 
     void insert(const BudgetInfo &bt) noexcept(false) override;
 
@@ -137,7 +149,7 @@ class SqliteDataBaseService<Permission, std::size_t> final
         : public Singleton<SqliteDataBaseService<Permission, std::size_t>>,
           public IDateBaseService,
           public IDataBaseModificate<Permission>,
-          public IDataBaseSelectID<Permission, std::size_t>,
+          public IDataBaseID<Permission, std::size_t>,
           public IDateBaseSelect<Permission> {
 
 public:
@@ -160,6 +172,10 @@ public:
     std::size_t getRowsQuantity() noexcept(false) override;
 
     const std::vector<Permission> getAll(const size_t &id) noexcept(false) override;
+
+    bool exists(const size_t &id) noexcept(false) override;
+
+    bool exists(const Permission &bt) noexcept(false) override;
 
     SqliteDataBaseService() = default;
 

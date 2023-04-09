@@ -5,6 +5,12 @@
 
 
 #include<string>
+#include<boost/predef.h>
+
+#if BOOST_OS_WINDOWS
+#define CRYPTOPP_ENABLE_NAMESPACE_WEAK 1
+#endif
+
 #include<cryptopp/md5.h>
 #include<cryptopp/hex.h>
 

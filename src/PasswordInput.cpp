@@ -1,6 +1,4 @@
-//
-// Created by andriy on 4/4/23.
-//
+
 
 
 #include "PasswordInput.h"
@@ -24,7 +22,7 @@ void PasswordInput::input() {
     GetConsoleMode(hStdin, &mode);
     SetConsoleMode(hStdin, mode & (~ENABLE_ECHO_INPUT));
 #endif
-    getline(std::cin, this->password);
+    std::cin>>this->password;
 
 #if BOOST_OS_LINUX
     tcsetattr(STDIN_FILENO, TCSANOW, &oldt);

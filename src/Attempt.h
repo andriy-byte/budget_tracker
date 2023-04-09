@@ -1,6 +1,4 @@
-//
-// Created by andriy on 4/4/23.
-//
+
 
 #ifndef BUDGET_TRACKER_ATTEMPT_H
 #define BUDGET_TRACKER_ATTEMPT_H

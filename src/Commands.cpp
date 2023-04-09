@@ -11,4 +11,5 @@ namespace commands {
     const boost::regex report("[Rr]eport");
     const boost::regex exit("[Ee]xit");
     const boost::regex help("[Hh]elp");
+    const boost::regex clear("[Cc]lear");
 }

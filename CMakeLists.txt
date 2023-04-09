@@ -1,12 +1,7 @@
 cmake_minimum_required(VERSION 3.25.0)
 project(budget_tracker)
 
-
-
-
-
 set(CMAKE_CXX_STANDARD 23)
-
 
 message(STATUS "Project source directory ${PROJECT_SOURCE_DIR}")
 
@@ -15,8 +10,6 @@ add_executable(budget_tracker main.cpp
         src/DatabaseTables.h
         src/SqliteDataBaseService.cpp
         src/SqliteDataBaseService.h
-        src/Paths.cpp
-        src/Paths.h
         src/Exception.cpp
         src/Exception.h
         src/Singleton.h
@@ -34,8 +27,6 @@ add_executable(budget_tracker main.cpp
         src/PasswordInput.cpp
         src/Attempt.cpp
         src/Attempt.h
-        src/Budget.cpp
-        src/Budget.h
         src/Datetime.cpp
         src/Datetime.h)
 

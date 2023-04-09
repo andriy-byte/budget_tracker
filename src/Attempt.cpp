@@ -1,6 +1,4 @@
-//
-// Created by andriy on 4/4/23.
-//
+
 
 #include "Attempt.h"
 

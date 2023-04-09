@@ -15,6 +15,8 @@ namespace commands {
     const extern boost::regex report;
     const extern boost::regex exit;
     const extern boost::regex help;
+    const extern boost::regex clear;
+
 
 }
 

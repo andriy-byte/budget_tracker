@@ -19,7 +19,8 @@ bool Login::isPasswordCorrect() const {
 }
 
 bool Login::isUserNameCorrect() const {
-    return SqliteDataBaseService<User, std::size_t>::getInstance().getId(this->user_name) >= MIN_USER_ID;
+    return SqliteDataBaseService<User,std::size_t>::getInstance().existsByName(this->user_name);
+
 }
 
 
@@ -36,11 +37,8 @@ void SignUp::registerUser() {
     );
 }
 
-bool SignUp::isAlreadyExists() {
-    return SqliteDataBaseService<User, std::size_t>::getInstance().getId(this->user_name) >= MIN_USER_ID;
-}
 
 bool SignUp::isUserNameAlreadyExists(const std::string &user_name) {
-    return SqliteDataBaseService<User, std::size_t>::getInstance().getId(user_name) >= MIN_USER_ID;
+    return SqliteDataBaseService<User,std::size_t>::getInstance().existsByName(user_name);
 
 }

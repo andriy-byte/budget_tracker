@@ -53,7 +53,6 @@ public:
 
     void registerUser();
 
-    bool isAlreadyExists();
 
 };
 

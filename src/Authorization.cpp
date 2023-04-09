@@ -4,9 +4,15 @@
 
 
 std::string Authorization::toHash(const std::string &value) {
+
+#if BOOST_OS_WINDOWS
+    CryptoPP::byte digest[CryptoPP::Weak::MD5::DIGESTSIZE];
+    CryptoPP::Weak::MD5 hash;
+#else
     CryptoPP::byte digest[CryptoPP::MD5::DIGESTSIZE];
-    std::string hash_result;
     CryptoPP::MD5 hash;
+#endif
+    std::string hash_result;
 
     hash.Update(reinterpret_cast<const CryptoPP::byte *>(value.data()), value.size());
     hash.Final(reinterpret_cast<CryptoPP::byte *>(&digest[0]));

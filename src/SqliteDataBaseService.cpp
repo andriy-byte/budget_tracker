@@ -4,14 +4,16 @@
 
 
 #define SQLITE_DEFAULT_EXCEPTION \
-catch (const sqlite::sqlite_exception& e) {\
-std::cerr  << e.get_code() << ": " << e.what() << " during " << e.get_sql() << std::endl;\
+catch (const sqlite::sqlite_exception& e) { \
+boost::source_location current_location;                                 \
+std::cerr << e.get_code() << ": " << e.what() << " during " << e.get_sql() << std::endl; \
+std::cerr << "in file : " << current_location.file_name() << " at line : " << current_location.line() << " in function : " << current_location.function_name(); \
 }\
 
 
 void SqliteDataBaseService<User, std::size_t>::connect() noexcept(false) {
     try {
-        SqliteDataBaseConnector::connect(paths::db::app_db.string());
+        SqliteDataBaseConnector::connect("budget_tracker.sqlite");
 
     } SQLITE_DEFAULT_EXCEPTION
 }
@@ -19,10 +21,10 @@ void SqliteDataBaseService<User, std::size_t>::connect() noexcept(false) {
 void SqliteDataBaseService<User, std::size_t>::create() noexcept(false) {
     try {
         SqliteDataBaseConnector::get()
-                << "create table if not exist user("
-                << "id integer primary key autoincrement,"
-                << "name text"
-                << ");";
+                << "create table if not exists user("
+                "id integer primary key autoincrement,"
+                "name text"
+                ");";
 
     } SQLITE_DEFAULT_EXCEPTION
 
@@ -52,9 +54,9 @@ void SqliteDataBaseService<User, std::size_t>::update(const size_t &id, const Us
     try {
         SqliteDataBaseConnector::get()
                 << "update user"
-                << "set"
-                << "name=?"
-                << "where id=?;"
+                "set"
+                "name=?"
+                "where id=?;"
                 << bt.name
                 << id;
 
@@ -105,24 +107,19 @@ std::size_t SqliteDataBaseService<User, std::size_t>::getRowsQuantity() noexcept
         std::size_t row_quantity;
         SqliteDataBaseConnector::get()
                 << "select count(*) from user;"
-                >> [&](std::size_t row_quantity_) {
-                    row_quantity = row_quantity_;
-                };
+                >> row_quantity;
 
         return row_quantity;
     } SQLITE_DEFAULT_EXCEPTION
 }
 
-std::size_t SqliteDataBaseService<User, std::size_t>::getId(const std::string &name) {
+std::size_t SqliteDataBaseService<User, std::size_t>::getId(const std::string &name) noexcept(false) {
     try {
         std::size_t id;
         SqliteDataBaseConnector::get()
                 << "select id from user where name=?;"
                 << name
-                >> [&](std::size_t id_) {
-                    id = id_;
-                };
-
+                >> id;
         return id;
     } SQLITE_DEFAULT_EXCEPTION
 }
@@ -140,9 +137,45 @@ const std::vector<User> SqliteDataBaseService<User, std::size_t>::getAll(const s
     } SQLITE_DEFAULT_EXCEPTION
 }
 
+bool SqliteDataBaseService<User, std::size_t>::exists(const size_t &id) noexcept(false) {
+    try {
+        bool exists;
+        SqliteDataBaseConnector::get()
+                << "select exists(select * from user where id=?)" << id
+                >> exists;
+
+        return exists;
+
+    } SQLITE_DEFAULT_EXCEPTION
+}
+
+bool SqliteDataBaseService<User, std::size_t>::exists(const User &bt) noexcept(false) {
+    try {
+        bool exists;
+        SqliteDataBaseConnector::get()
+                << "select exists(select * from user where id=? and name=?)" << bt.id << bt.name
+                >> exists;
+
+        return exists;
+
+    } SQLITE_DEFAULT_EXCEPTION
+}
+
+bool SqliteDataBaseService<User, std::size_t>::existsByName(const std::string &name) noexcept(false) {
+    try {
+        bool exists;
+        SqliteDataBaseConnector::get()
+                << "select exists(select * from user where name=?)" << name
+                >> exists;
+
+        return exists;
+
+    } SQLITE_DEFAULT_EXCEPTION
+}
+
 void SqliteDataBaseService<BudgetGroup, std::size_t>::connect() noexcept(false) {
     try {
-        SqliteDataBaseConnector::connect(paths::db::app_db.string());
+        SqliteDataBaseConnector::connect("budget_tracker.sqlite");
 
     } SQLITE_DEFAULT_EXCEPTION
 }
@@ -150,10 +183,10 @@ void SqliteDataBaseService<BudgetGroup, std::size_t>::connect() noexcept(false) 
 void SqliteDataBaseService<BudgetGroup, std::size_t>::create() noexcept(false) {
     try {
         SqliteDataBaseConnector::get()
-                << "create table if not exist budget_group("
-                << "id integer primary key,"
-                << "user_id integer"
-                << ");";
+                << "create table if not exists budget_group("
+                "id integer primary key,"
+                "user_id integer"
+                ");";
     } SQLITE_DEFAULT_EXCEPTION
 
 }
@@ -177,10 +210,10 @@ void SqliteDataBaseService<BudgetGroup, std::size_t>::update(const size_t &id, c
     try {
         SqliteDataBaseConnector::get()
                 << "update budget_group"
-                << "set"
-                << "id=?"
-                << "user_id=?"
-                << "where id=?;"
+                "set"
+                "id=?"
+                "user_id=?"
+                "where id=?;"
                 << bt.id
                 << bt.user_id
                 << id;
@@ -188,6 +221,31 @@ void SqliteDataBaseService<BudgetGroup, std::size_t>::update(const size_t &id, c
     } SQLITE_DEFAULT_EXCEPTION
 
 }
+
+bool SqliteDataBaseService<BudgetGroup, std::size_t>::exists(const size_t &id) noexcept(false) {
+    try {
+        bool exists;
+        SqliteDataBaseConnector::get()
+                << "select exists(select * from budget_group where id=?) "
+                << id >> exists;
+
+        return exists;
+
+    } SQLITE_DEFAULT_EXCEPTION
+}
+
+bool SqliteDataBaseService<BudgetGroup, std::size_t>::exists(const BudgetGroup &bt) noexcept(false) {
+    try {
+        bool exists;
+        SqliteDataBaseConnector::get()
+                << "select exists(select * from budget_group where id=? user_id=?) "
+                << bt.id << bt.user_id >> exists;
+
+        return exists;
+
+    } SQLITE_DEFAULT_EXCEPTION
+}
+
 
 const BudgetGroup &SqliteDataBaseService<BudgetGroup, std::size_t>::get(const size_t &id) noexcept(false) {
     try {
@@ -200,7 +258,7 @@ const BudgetGroup &SqliteDataBaseService<BudgetGroup, std::size_t>::get(const si
                     budget_group.id = id_;
                     budget_group.user_id = user_id;
                 };
-
+        return budget_group;
     } SQLITE_DEFAULT_EXCEPTION
 }
 
@@ -230,9 +288,7 @@ std::size_t SqliteDataBaseService<BudgetGroup, std::size_t>::getRowsQuantity() n
         std::size_t row_quantity;
         SqliteDataBaseConnector::get()
                 << "select count(*) from budget_group;"
-                >> [&](std::size_t row_quantity_) {
-                    row_quantity = row_quantity_;
-                };
+                >> row_quantity;
 
         return row_quantity;
     } SQLITE_DEFAULT_EXCEPTION
@@ -254,7 +310,7 @@ SqliteDataBaseService<BudgetGroup, std::size_t>::getAll(const size_t &id) noexce
 
 void SqliteDataBaseService<BudgetInfo, std::size_t>::connect() noexcept(false) {
     try {
-        SqliteDataBaseConnector::connect(paths::db::app_db.string());
+        SqliteDataBaseConnector::connect("budget_tracker.sqlite");
 
     } SQLITE_DEFAULT_EXCEPTION
 }
@@ -262,11 +318,11 @@ void SqliteDataBaseService<BudgetInfo, std::size_t>::connect() noexcept(false) {
 void SqliteDataBaseService<BudgetInfo, std::size_t>::create() noexcept(false) {
     try {
         SqliteDataBaseConnector::get()
-                << "create table if not exist budget_info("
-                << "id integer primary key,"
-                << "money real"
-                << "date_time text"
-                << ");";
+                << "create table if not exists budget_info("
+                "id integer primary key,"
+                "money real"
+                "date_time text"
+                ");";
     } SQLITE_DEFAULT_EXCEPTION
 
 }
@@ -291,11 +347,11 @@ void SqliteDataBaseService<BudgetInfo, std::size_t>::update(const size_t &id, co
     try {
         SqliteDataBaseConnector::get()
                 << "update budget_info"
-                << "set"
-                << "id=?"
-                << "money=?"
-                << "date_time=?"
-                << "where id=?;"
+                "set"
+                "id=?"
+                "money=?"
+                "date_time=?"
+                "where id=?;"
                 << bt.id
                 << bt.money
                 << bt.date_time
@@ -320,6 +376,30 @@ const std::vector<BudgetInfo> SqliteDataBaseService<BudgetInfo, std::size_t>::ge
                 };
 
         return budget_infos;
+    } SQLITE_DEFAULT_EXCEPTION
+}
+
+bool SqliteDataBaseService<BudgetInfo, std::size_t>::exists(const size_t &id) noexcept(false) {
+    try {
+        bool exists;
+        SqliteDataBaseConnector::get()
+                << "select exists(select * from budget_info where id=?) "
+                << id >> exists;
+
+        return exists;
+
+    } SQLITE_DEFAULT_EXCEPTION
+}
+
+bool SqliteDataBaseService<BudgetInfo, std::size_t>::exists(const BudgetInfo &bt) noexcept(false) {
+    try {
+        bool exists;
+        SqliteDataBaseConnector::get()
+                << "select exists(select * from budget_info where id=? and money=? and date_time=?)"
+                << bt.id << bt.money << bt.date_time >> exists;
+
+        return exists;
+
     } SQLITE_DEFAULT_EXCEPTION
 }
 
@@ -366,9 +446,7 @@ std::size_t SqliteDataBaseService<BudgetInfo, std::size_t>::getRowsQuantity() no
         std::size_t row_quantity;
         SqliteDataBaseConnector::get()
                 << "select count(*) from budget_info;"
-                >> [&](std::size_t row_quantity_) {
-                    row_quantity = row_quantity_;
-                };
+                >> row_quantity;
 
         return row_quantity;
     } SQLITE_DEFAULT_EXCEPTION
@@ -389,7 +467,7 @@ const std::vector<BudgetInfo> SqliteDataBaseService<BudgetInfo, std::size_t>::ge
 
 void SqliteDataBaseService<Permission, std::size_t>::connect() noexcept(false) {
     try {
-        SqliteDataBaseConnector::connect(paths::db::app_db.string());
+        SqliteDataBaseConnector::connect("budget_tracker.sqlite");
 
     } SQLITE_DEFAULT_EXCEPTION
 }
@@ -397,10 +475,10 @@ void SqliteDataBaseService<Permission, std::size_t>::connect() noexcept(false) {
 void SqliteDataBaseService<Permission, std::size_t>::create() noexcept(false) {
     try {
         SqliteDataBaseConnector::get()
-                << "create table if not exist permission("
-                << "user_id integer,"
-                << "password text"
-                << ");";
+                << "create table if not exists permission("
+                "user_id integer,"
+                "password text"
+                ");";
     } SQLITE_DEFAULT_EXCEPTION
 }
 
@@ -425,13 +503,37 @@ void SqliteDataBaseService<Permission, std::size_t>::update(const size_t &id, co
     try {
         SqliteDataBaseConnector::get()
                 << "update permission "
-                << "set"
-                << "user_id=?"
-                << "password=?"
-                << "where user_id=?;"
+                "set"
+                "user_id=?"
+                "password=?"
+                "where user_id=?;"
                 << bt.user_id
                 << bt.password
                 << id;
+
+    } SQLITE_DEFAULT_EXCEPTION
+}
+
+bool SqliteDataBaseService<Permission, std::size_t>::exists(const size_t &id) noexcept(false) {
+    try {
+        bool exists;
+        SqliteDataBaseConnector::get()
+                << "select exists(select * from permission where user_id=?) "
+                << id >> exists;
+
+        return exists;
+
+    } SQLITE_DEFAULT_EXCEPTION
+}
+
+bool SqliteDataBaseService<Permission, std::size_t>::exists(const Permission &bt) noexcept(false) {
+    try {
+        bool exists;
+        SqliteDataBaseConnector::get()
+                << "select exists(select * from permission where user_id=? and password=?)"
+                << bt.user_id << bt.password >> exists;
+
+        return exists;
 
     } SQLITE_DEFAULT_EXCEPTION
 }
@@ -488,9 +590,7 @@ std::size_t SqliteDataBaseService<Permission, std::size_t>::getRowsQuantity() no
         std::size_t row_quantity;
         SqliteDataBaseConnector::get()
                 << "select count(*) from permission;"
-                >> [&](std::size_t row_quantity_) {
-                    row_quantity = row_quantity_;
-                };
+                >> row_quantity;
 
         return row_quantity;
     } SQLITE_DEFAULT_EXCEPTION

@@ -1,6 +1,4 @@
-//
-// Created by andriy on 4/6/23.
-//
+
 
 #include "Datetime.h"
 
@@ -22,7 +20,7 @@ std::string Datetime::now() {
     auto t = std::time(nullptr);
     auto tm = *std::localtime(&t);
 
-    std::ostringstream oss;
+    std::stringstream oss;
     oss << std::put_time(&tm, this->format.c_str());
     return oss.str();
 
