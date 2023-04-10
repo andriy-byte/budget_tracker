@@ -19,6 +19,8 @@ const std::string session_info::input_line(">>> ");
 const std::string session_info::start_message("Chose option, and write it in terminal\nsign-in\nsing-up\n");
 
 void Session::run() {
+
+
     using sql_user = SqliteDataBaseService<User, std::size_t>;
     using sql_permission = SqliteDataBaseService<Permission, std::size_t>;
     using sql_budget_group = SqliteDataBaseService<BudgetGroup, std::size_t>;
@@ -36,87 +38,93 @@ void Session::run() {
 
     std::string command;
     std::string user_name;
-    bool passed;
+    bool passed = false;
     auto input_style = fmt::fg(fmt::color::white) | fmt::emphasis::bold;
     auto wrong_input_style = fmt::fg(fmt::color::red) | fmt::emphasis::bold;
     fmt::print(input_style, session_info::start_message);
 
 
-    fmt::print(input_style, session_info::input_line);
-    std::cin >> command;
-
     Attempt attempt(3);
-
     auto tryAttempts = [&]() {
         attempt--;
         if (attempt.isExhausted()) {
             fmt::print(input_style, "\nYou have exhausted all attempts. Program will bee exit in 5 seconds");
             std::this_thread::sleep_for(std::chrono::seconds(5));
-            std::terminate();
+            std::exit(0);
         }
     };
-    if (boost::regex_match(command, commands::sign_in)) {
-        PasswordInput password_input;
-        std::string user_name, password;
-        fmt::print(input_style, "\nInput user name: ");
-        std::cin >> user_name;
-        fmt::print(input_style, "\nInput password: ");
-        password_input.input();
-        password = password_input.getPassword();
-        Login login(user_name, password);
 
+    while (!passed) {
+        fmt::print(input_style, session_info::input_line);
+        std::cin >> command;
 
-        while (login.isUserNameCorrect()) {
-            fmt::print(wrong_input_style,
-                       "\nWrong user name dont exists user: {}\nRe-input user_name (attempts - {}) :",
-                       user_name, attempt.getAttempt());
-            tryAttempts();
+        if (boost::regex_match(command, commands::sign_in)) {
+            PasswordInput password_input;
+            std::string user_name, password;
+            fmt::print(input_style, "\nInput user name: ");
             std::cin >> user_name;
-        }
-        while (login.isPasswordCorrect()) {
-            fmt::print(wrong_input_style, "\nWrong password for user {} : {}\nRe-input password (attempts - {}) :",
-                       user_name, attempt.getAttempt());
-            tryAttempts();
+            fmt::print(input_style, "\nInput password: ");
             password_input.input();
-        }
-        passed = true;
-    }
+            password = password_input.getPassword();
+            Login login(user_name, password);
 
-    attempt.reset();
-    if (boost::regex_match(command, commands::sign_up)) {
-        [[maybe_unused]] std::string password, check_password;
-        fmt::print(input_style, "\nCreate user name: ");
-        std::cin >> user_name;
-        fmt::print("\n");
-        while (SignUp::isUserNameAlreadyExists(user_name)) {
-            fmt::print(wrong_input_style, "\nSorry, user with name {} already exists, try another name: ", user_name);
-            tryAttempts();
+
+            while (!login.isUserNameCorrect() || !attempt.isExhausted()) {
+                tryAttempts();
+                fmt::print(wrong_input_style,
+                           "\nWrong user name don't exists user: {}\nRe-input user_name (attempts - {}) :",
+                           user_name, attempt.getAttempt());
+                std::cin >> user_name;
+            }
+            attempt.reset();
+            while (!login.isPasswordCorrect() || !attempt.isExhausted()) {
+                tryAttempts();
+                fmt::print(wrong_input_style, "\nWrong password for user {} : {}\nRe-input password (attempts - {}) :",
+                           user_name, attempt.getAttempt());
+                password_input.input();
+            }
+            passed = true;
+            attempt.reset();
+
+        } else if (boost::regex_match(command, commands::sign_up)) {
+            [[maybe_unused]] std::string password, check_password;
+            fmt::print(input_style, "\nCreate user name: ");
             std::cin >> user_name;
-        }
-        attempt.reset();
-        PasswordInput password_input, check_password_input;
+            fmt::print("\n");
+            while (SignUp::isUserNameAlreadyExists(user_name)) {
+                tryAttempts();
+                fmt::print(wrong_input_style, "\nSorry, user with name {} already exists, try another name: ",
+                           user_name);
+                std::cin >> user_name;
+            }
+            attempt.reset();
+            PasswordInput password_input, check_password_input;
 
-        fmt::print(input_style, "\nCreate password : ");
-        password_input.input();
-        password = password_input.getPassword();
-        fmt::print(input_style, "\nRepeat password : ");
-        check_password_input.input();
-        check_password = check_password_input.getPassword();
-        while (password != check_password) {
-            fmt::print(wrong_input_style, "\nPasswords do not match, re-input password: ");
-            tryAttempts();
+            fmt::print(input_style, "\nCreate password : ");
+            password_input.input();
+            password = password_input.getPassword();
+            fmt::print(input_style, "\nRepeat password : ");
             check_password_input.input();
             check_password = check_password_input.getPassword();
-        }
-        sql_user::getInstance().insert(User{.name=user_name});
-        sql_permission::getInstance().insert(
-                Permission{
-                        .user_id = sql_user::getInstance().getId(user_name),
-                        .password = password,
-                });
-        passed = true;
-    }
+            while (password != check_password) {
+                tryAttempts();
+                fmt::print(wrong_input_style, "\nPasswords do not match, re-input password: ");
+                check_password_input.input();
+                check_password = check_password_input.getPassword();
+            }
+            sql_user::getInstance().insert(User{.name=user_name});
+            sql_permission::getInstance().insert(
+                    Permission{
+                            .user_id = sql_user::getInstance().getId(user_name),
+                            .password = password,
+                    });
+            passed = true;
+            attempt.reset();
 
+        } else {
+            fmt::print(input_style, "\nYou need to Sign-in or Sign-up \n");
+        }
+    }
 
     if (passed) {
         std::size_t current_user_id = sql_user::getInstance().getId(user_name);
@@ -175,19 +183,16 @@ void Session::run() {
                 sql_budget_info::getInstance().insert(
                         BudgetInfo{.money = budget_info.money - costs, .date_time=datetime.now()});
 
-            }else if(boost::regex_match(command, commands::clear)) {
+            } else if (boost::regex_match(command, commands::clear)) {
 #if BOOST_OS_WINDOWS
                 std::system("cls");
 #else
                 std::system("clear");
 #endif
-            }
-            else {
+            } else {
                 fmt::print(input_style, "\nDon't exists command {}", command);
             }
         }
-    } else{
-        fmt::print(input_style,"\nYou need to Sign-in or Sign-up ");
     }
 
 

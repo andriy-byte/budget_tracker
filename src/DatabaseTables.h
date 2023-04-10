@@ -29,4 +29,4 @@ struct Permission {
 
 };
 
-#endif //BUDGET_TRACKER_DATABASETABLES_H
+#endif //BUDGET_TRACKER_DATABASETABLES_Hcd

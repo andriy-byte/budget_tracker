@@ -22,9 +22,9 @@ void SqliteDataBaseService<User, std::size_t>::create() noexcept(false) {
     try {
         SqliteDataBaseConnector::get()
                 << "create table if not exists user("
-                "id integer primary key autoincrement,"
-                "name text"
-                ");";
+                   "id integer primary key autoincrement,"
+                   "name text"
+                   ");";
 
     } SQLITE_DEFAULT_EXCEPTION
 
@@ -42,7 +42,7 @@ void SqliteDataBaseService<User, std::size_t>::drop() noexcept(false) {
 void SqliteDataBaseService<User, std::size_t>::insert(const User &bt) noexcept(false) {
     try {
         SqliteDataBaseConnector::get()
-                << "insert info user (name) values (?);"
+                << "insert into user (name) values (?);"
                 << bt.name;
 
 
@@ -54,9 +54,9 @@ void SqliteDataBaseService<User, std::size_t>::update(const size_t &id, const Us
     try {
         SqliteDataBaseConnector::get()
                 << "update user"
-                "set"
-                "name=?"
-                "where id=?;"
+                   "set"
+                   "name=?"
+                   "where id=?;"
                 << bt.name
                 << id;
 
@@ -184,9 +184,9 @@ void SqliteDataBaseService<BudgetGroup, std::size_t>::create() noexcept(false) {
     try {
         SqliteDataBaseConnector::get()
                 << "create table if not exists budget_group("
-                "id integer primary key,"
-                "user_id integer"
-                ");";
+                   "id integer primary key,"
+                   "user_id integer"
+                   ");";
     } SQLITE_DEFAULT_EXCEPTION
 
 }
@@ -210,10 +210,10 @@ void SqliteDataBaseService<BudgetGroup, std::size_t>::update(const size_t &id, c
     try {
         SqliteDataBaseConnector::get()
                 << "update budget_group"
-                "set"
-                "id=?"
-                "user_id=?"
-                "where id=?;"
+                   "set"
+                   "id=?"
+                   "user_id=?"
+                   "where id=?;"
                 << bt.id
                 << bt.user_id
                 << id;
@@ -319,10 +319,10 @@ void SqliteDataBaseService<BudgetInfo, std::size_t>::create() noexcept(false) {
     try {
         SqliteDataBaseConnector::get()
                 << "create table if not exists budget_info("
-                "id integer primary key,"
-                "money real"
-                "date_time text"
-                ");";
+                   "id integer primary key,"
+                   "money real"
+                   "date_time text"
+                   ");";
     } SQLITE_DEFAULT_EXCEPTION
 
 }
@@ -347,11 +347,11 @@ void SqliteDataBaseService<BudgetInfo, std::size_t>::update(const size_t &id, co
     try {
         SqliteDataBaseConnector::get()
                 << "update budget_info"
-                "set"
-                "id=?"
-                "money=?"
-                "date_time=?"
-                "where id=?;"
+                   "set"
+                   "id=?"
+                   "money=?"
+                   "date_time=?"
+                   "where id=?;"
                 << bt.id
                 << bt.money
                 << bt.date_time
@@ -476,9 +476,9 @@ void SqliteDataBaseService<Permission, std::size_t>::create() noexcept(false) {
     try {
         SqliteDataBaseConnector::get()
                 << "create table if not exists permission("
-                "user_id integer,"
-                "password text"
-                ");";
+                   "user_id integer,"
+                   "password text"
+                   ");";
     } SQLITE_DEFAULT_EXCEPTION
 }
 
@@ -503,10 +503,10 @@ void SqliteDataBaseService<Permission, std::size_t>::update(const size_t &id, co
     try {
         SqliteDataBaseConnector::get()
                 << "update permission "
-                "set"
-                "user_id=?"
-                "password=?"
-                "where user_id=?;"
+                   "set"
+                   "user_id=?"
+                   "password=?"
+                   "where user_id=?;"
                 << bt.user_id
                 << bt.password
                 << id;
