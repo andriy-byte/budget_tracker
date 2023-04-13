@@ -4,9 +4,7 @@
 #include "Session.h"
 
 const std::string session_info::help(
-        "List of commands:\n"
-        "sign-in   ------ register new user\n"
-        "sign-up   ------ login with exists user\n"
+        "\nList of commands:\n"
         "income    ------ add money to budget\n"
         "costs     ------ subtract money from budget\n"
         "show      ------ show current budget balance\n"
@@ -15,8 +13,11 @@ const std::string session_info::help(
         "clear     ------ clear console\n"
 );
 
-const std::string session_info::input_line(">>> ");
-const std::string session_info::start_message("Chose option, and write it in terminal\nsign-in\nsing-up\n");
+
+const std::string session_info::input_line("\n>>> ");
+const std::string session_info::start_message("\nChose option, and write it in terminal\n"
+                                              "sign-in   ------ register new user\n"
+                                              "sign-up   ------ login with exists user\n");
 
 void Session::run() {
 
@@ -48,10 +49,16 @@ void Session::run() {
     auto tryAttempts = [&]() {
         attempt--;
         if (attempt.isExhausted()) {
-            fmt::print(input_style, "\nYou have exhausted all attempts. Program will bee exit in 5 seconds");
-            std::this_thread::sleep_for(std::chrono::seconds(5));
+            fmt::print(input_style, "\nYou have exhausted all attempts. The program terminates.\n");
             std::exit(0);
         }
+    };
+    auto cls = []() {
+#if BOOST_OS_WINDOWS
+        std::system("cls");
+#else
+        std::system("clear");
+#endif
     };
 
     while (!passed) {
@@ -60,7 +67,7 @@ void Session::run() {
 
         if (boost::regex_match(command, commands::sign_in)) {
             PasswordInput password_input;
-            std::string user_name, password;
+            std::string password;
             fmt::print(input_style, "\nInput user name: ");
             std::cin >> user_name;
             fmt::print(input_style, "\nInput password: ");
@@ -69,7 +76,7 @@ void Session::run() {
             Login login(user_name, password);
 
 
-            while (!login.isUserNameCorrect() || !attempt.isExhausted()) {
+            while (!login.isUserNameCorrect()) {
                 tryAttempts();
                 fmt::print(wrong_input_style,
                            "\nWrong user name don't exists user: {}\nRe-input user_name (attempts - {}) :",
@@ -77,7 +84,7 @@ void Session::run() {
                 std::cin >> user_name;
             }
             attempt.reset();
-            while (!login.isPasswordCorrect() || !attempt.isExhausted()) {
+            while (!login.isPasswordCorrect()) {
                 tryAttempts();
                 fmt::print(wrong_input_style, "\nWrong password for user {} : {}\nRe-input password (attempts - {}) :",
                            user_name, attempt.getAttempt());
@@ -108,7 +115,8 @@ void Session::run() {
             check_password = check_password_input.getPassword();
             while (password != check_password) {
                 tryAttempts();
-                fmt::print(wrong_input_style, "\nPasswords do not match, re-input password: ");
+                fmt::print(wrong_input_style, "\nPasswords do not match, re-input password (attempts - {}): ",
+                           attempt.getAttempt());
                 check_password_input.input();
                 check_password = check_password_input.getPassword();
             }
@@ -116,11 +124,14 @@ void Session::run() {
             sql_permission::getInstance().insert(
                     Permission{
                             .user_id = sql_user::getInstance().getId(user_name),
-                            .password = password,
+                            .password = Authorization::encrypt(password),
                     });
             passed = true;
             attempt.reset();
 
+        } else if (boost::regex_match(command, commands::clear)) {
+            cls();
+            fmt::print(input_style, session_info::start_message);
         } else {
             fmt::print(input_style, "\nYou need to Sign-in or Sign-up \n");
         }
@@ -128,7 +139,9 @@ void Session::run() {
 
     if (passed) {
         std::size_t current_user_id = sql_user::getInstance().getId(user_name);
-
+        cls();
+        fmt::print(input_style, "\n\n Welcome {}\n\n", user_name);
+        fmt::print(input_style, session_info::help);
         while (!boost::regex_match(command, commands::exit)) {
             fmt::print(input_style, session_info::input_line);
             std::cin >> command;
@@ -145,55 +158,73 @@ void Session::run() {
                         });
 
             } else if (boost::regex_match(command, commands::show)) {
-                BudgetInfo budget_info = sql_budget_info::getInstance().get(current_user_id);
-                fmt::print(input_style, "\nMoney quantity : {}", budget_info.money);
-                fmt::print(input_style, "\nLatest modification : {}", budget_info.date_time);
+                if (sql_budget_info::getInstance().exists(current_user_id)) {
+                    BudgetInfo budget_info = sql_budget_info::getInstance().get(current_user_id);
+                    fmt::print(input_style, "\nMoney quantity : {}", budget_info.money);
+                    fmt::print(input_style, "\nLatest modification : {}", budget_info.date_time);
+                } else {
+                    fmt::print(wrong_input_style, "Doesn't exists any information");
+                }
             } else if (boost::regex_match(command, commands::report)) {
-                std::string from, to;
-                fmt::print(input_style, "\nFrom date time (yyyy-mm-dd) : ");
-                std::cin >> from;
-                fmt::print(input_style, "\nTo date time (yyyy-mm-dd) : ");
-                std::cin >> to;
+                if (sql_budget_info::getInstance().exists(current_user_id)) {
+                    std::string from, to;
+                    fmt::print(input_style, "\nFrom date time (yyyy-mm-dd) : ");
+                    std::cin >> from;
+                    fmt::print(input_style, "\nTo date time (yyyy-mm-dd) : ");
+                    std::cin >> to;
 
-                boost::gregorian::date from_date, to_date;
-                try {
-                    from_date = boost::gregorian::date_from_iso_string(boost::replace_all_copy(from, "-", ""));
-                    to_date = boost::gregorian::date_from_iso_string(boost::replace_all_copy(to, "-", ""));
-                } catch (std::out_of_range &e) {
-                    fmt::print("{}", e.what());
-                    break;
+                    boost::gregorian::date from_date, to_date;
+                    try {
+                        from_date = boost::gregorian::date_from_iso_string(boost::replace_all_copy(from, "-", ""));
+                        to_date = boost::gregorian::date_from_iso_string(boost::replace_all_copy(to, "-", ""));
+                    } catch (std::out_of_range &e) {
+                        fmt::print("{}", e.what());
+                        break;
+                    }
+                    if (from_date < to_date) {
+                        if (sql_budget_info::getInstance().existsBetweenDatesById(current_user_id,
+                                                                                  to_sql_string(from_date),
+                                                                                  to_sql_string(to_date))) {
+                            for (auto &budget_info_item: sql_budget_info::getInstance().getBetweenDatesById(
+                                    current_user_id,
+                                    to_sql_string(
+                                            from_date),
+                                    to_sql_string(
+                                            to_date))) {
+                                fmt::print(input_style, "Money status : {}\n", budget_info_item.money);
+                                fmt::print(input_style, "Date of modification : {}\n", budget_info_item.date_time);
+                            }
+                        } else {
+                            fmt::print(wrong_input_style, "Doesn't exists any information between {} and {}",
+                                       to_sql_string(from_date), to_sql_string(to_date));
+                        }
+                    } else {
+                        fmt::print(wrong_input_style, "Can't select information between {} and {}",
+                                   to_sql_string(from_date), to_sql_string(to_date));
+                    }
+                } else {
+                    fmt::print(wrong_input_style, "Doesn't exists any information");
                 }
-
-                for (auto &i: sql_budget_info::getInstance().getBetweenDatesById(current_user_id,
-                                                                                 to_sql_string(from_date),
-                                                                                 to_sql_string(to_date))) {
-                    fmt::print(input_style, "Money status : {}\n", i.money);
-                    fmt::print(input_style, "Date of modification : {}\n", i.date_time);
-
-                }
-
             } else if (boost::regex_match(command, commands::help)) {
-                fmt::print("{}", session_info::help);
+                fmt::print(input_style, "{}", session_info::help);
             } else if (boost::regex_match(command, commands::costs)) {
-                BudgetInfo budget_info = sql_budget_info::getInstance().get(current_user_id);
-                double costs;
-                Datetime datetime;
-                fmt::print(input_style, "\nInput costs : ");
-                std::cin >> costs;
-                sql_budget_info::getInstance().insert(
-                        BudgetInfo{.money = budget_info.money - costs, .date_time=datetime.now()});
-
+                if (sql_budget_info::getInstance().exists(current_user_id)) {
+                    BudgetInfo budget_info = sql_budget_info::getInstance().get(current_user_id);
+                    double costs;
+                    Datetime datetime;
+                    fmt::print(input_style, "\nInput costs : ");
+                    std::cin >> costs;
+                    sql_budget_info::getInstance().insert(
+                            BudgetInfo{.money = budget_info.money - costs, .date_time=datetime.now()});
+                } else {
+                    fmt::print(wrong_input_style, "Doesn't exists any information");
+                }
             } else if (boost::regex_match(command, commands::clear)) {
-#if BOOST_OS_WINDOWS
-                std::system("cls");
-#else
-                std::system("clear");
-#endif
+                cls();
             } else {
-                fmt::print(input_style, "\nDon't exists command {}", command);
+                fmt::print(input_style, "\nDon't exists command {}\n\n", command);
             }
         }
+
     }
-
-
 }

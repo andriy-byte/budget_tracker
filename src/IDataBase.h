@@ -32,9 +32,9 @@ template<BudgetTrackerTypes BT, typename ID>
 struct IDataBaseID {
     virtual void update(const ID &, const BT &) noexcept(false) = 0;
 
-    virtual const BT &get(const ID &) noexcept(false) = 0;
+    virtual BT get(const ID &) noexcept(false) = 0;
 
-    virtual const std::vector<BT> getAll(const ID &) noexcept(false) = 0;
+    virtual std::vector<BT> getAll(const ID &) noexcept(false) = 0;
 
     virtual void erase(const ID &) noexcept(false) = 0;
 

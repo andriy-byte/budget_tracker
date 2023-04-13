@@ -63,7 +63,7 @@ void SqliteDataBaseService<User, std::size_t>::update(const size_t &id, const Us
     } SQLITE_DEFAULT_EXCEPTION
 }
 
-const User &SqliteDataBaseService<User, std::size_t>::get(const size_t &id) noexcept(false) {
+User SqliteDataBaseService<User, std::size_t>::get(const size_t &id) noexcept(false) {
     try {
         User user;
         SqliteDataBaseConnector::get()
@@ -124,7 +124,7 @@ std::size_t SqliteDataBaseService<User, std::size_t>::getId(const std::string &n
     } SQLITE_DEFAULT_EXCEPTION
 }
 
-const std::vector<User> SqliteDataBaseService<User, std::size_t>::getAll(const size_t &id) noexcept(false) {
+std::vector<User> SqliteDataBaseService<User, std::size_t>::getAll(const size_t &id) noexcept(false) {
     try {
         std::vector<User> users;
         SqliteDataBaseConnector::get()
@@ -141,7 +141,7 @@ bool SqliteDataBaseService<User, std::size_t>::exists(const size_t &id) noexcept
     try {
         bool exists;
         SqliteDataBaseConnector::get()
-                << "select exists(select * from user where id=?)" << id
+                << "select exists(select * from user where id=?);" << id
                 >> exists;
 
         return exists;
@@ -153,7 +153,7 @@ bool SqliteDataBaseService<User, std::size_t>::exists(const User &bt) noexcept(f
     try {
         bool exists;
         SqliteDataBaseConnector::get()
-                << "select exists(select * from user where id=? and name=?)" << bt.id << bt.name
+                << "select exists(select * from user where id=? and name=?);" << bt.id << bt.name
                 >> exists;
 
         return exists;
@@ -165,7 +165,7 @@ bool SqliteDataBaseService<User, std::size_t>::existsByName(const std::string &n
     try {
         bool exists;
         SqliteDataBaseConnector::get()
-                << "select exists(select * from user where name=?)" << name
+                << "select exists(select * from user where name=?);" << name
                 >> exists;
 
         return exists;
@@ -201,7 +201,7 @@ void SqliteDataBaseService<BudgetGroup, std::size_t>::drop() noexcept(false) {
 void SqliteDataBaseService<BudgetGroup, std::size_t>::insert(const BudgetGroup &bt) noexcept(false) {
     try {
         SqliteDataBaseConnector::get()
-                << "insert into budget_group (id, user_id) values(?, ?);"
+                << "insert into budget_group (id,user_id) values(?,?);"
                 << bt.id << bt.user_id;
     } SQLITE_DEFAULT_EXCEPTION
 }
@@ -226,7 +226,7 @@ bool SqliteDataBaseService<BudgetGroup, std::size_t>::exists(const size_t &id) n
     try {
         bool exists;
         SqliteDataBaseConnector::get()
-                << "select exists(select * from budget_group where id=?) "
+                << "select exists(select * from budget_group where id=?);"
                 << id >> exists;
 
         return exists;
@@ -238,7 +238,7 @@ bool SqliteDataBaseService<BudgetGroup, std::size_t>::exists(const BudgetGroup &
     try {
         bool exists;
         SqliteDataBaseConnector::get()
-                << "select exists(select * from budget_group where id=? user_id=?) "
+                << "select exists(select * from budget_group where id=? user_id=?);"
                 << bt.id << bt.user_id >> exists;
 
         return exists;
@@ -247,7 +247,7 @@ bool SqliteDataBaseService<BudgetGroup, std::size_t>::exists(const BudgetGroup &
 }
 
 
-const BudgetGroup &SqliteDataBaseService<BudgetGroup, std::size_t>::get(const size_t &id) noexcept(false) {
+BudgetGroup SqliteDataBaseService<BudgetGroup, std::size_t>::get(const size_t &id) noexcept(false) {
     try {
         BudgetGroup budget_group;
         SqliteDataBaseConnector::get()
@@ -294,8 +294,7 @@ std::size_t SqliteDataBaseService<BudgetGroup, std::size_t>::getRowsQuantity() n
     } SQLITE_DEFAULT_EXCEPTION
 }
 
-const std::vector<BudgetGroup>
-SqliteDataBaseService<BudgetGroup, std::size_t>::getAll(const size_t &id) noexcept(false) {
+std::vector<BudgetGroup> SqliteDataBaseService<BudgetGroup, std::size_t>::getAll(const size_t &id) noexcept(false) {
     try {
         std::vector<BudgetGroup> budget_groups;
         SqliteDataBaseConnector::get()
@@ -319,8 +318,8 @@ void SqliteDataBaseService<BudgetInfo, std::size_t>::create() noexcept(false) {
     try {
         SqliteDataBaseConnector::get()
                 << "create table if not exists budget_info("
-                   "id integer primary key,"
-                   "money real"
+                   "id integer,"
+                   "money real,"
                    "date_time text"
                    ");";
     } SQLITE_DEFAULT_EXCEPTION
@@ -337,7 +336,7 @@ void SqliteDataBaseService<BudgetInfo, std::size_t>::drop() noexcept(false) {
 void SqliteDataBaseService<BudgetInfo, std::size_t>::insert(const BudgetInfo &bt) noexcept(false) {
     try {
         SqliteDataBaseConnector::get()
-                << "insert into budget_info (id, money, date_time) values(?, ?, ?);"
+                << "insert into budget_info (id,money,date_time) values(?,?,?);"
                 << bt.id << bt.money << bt.date_time;
 
     } SQLITE_DEFAULT_EXCEPTION
@@ -361,7 +360,7 @@ void SqliteDataBaseService<BudgetInfo, std::size_t>::update(const size_t &id, co
 
 }
 
-const std::vector<BudgetInfo> SqliteDataBaseService<BudgetInfo, std::size_t>::getBetweenDatesById(std::size_t id,
+std::vector<BudgetInfo> SqliteDataBaseService<BudgetInfo, std::size_t>::getBetweenDatesById(std::size_t id,
                                                                                                   const std::string &from,
                                                                                                   const std::string &to) noexcept(false) {
     try {
@@ -383,7 +382,7 @@ bool SqliteDataBaseService<BudgetInfo, std::size_t>::exists(const size_t &id) no
     try {
         bool exists;
         SqliteDataBaseConnector::get()
-                << "select exists(select * from budget_info where id=?) "
+                << "select exists(select * from budget_info where id=?);"
                 << id >> exists;
 
         return exists;
@@ -395,7 +394,7 @@ bool SqliteDataBaseService<BudgetInfo, std::size_t>::exists(const BudgetInfo &bt
     try {
         bool exists;
         SqliteDataBaseConnector::get()
-                << "select exists(select * from budget_info where id=? and money=? and date_time=?)"
+                << "select exists(select * from budget_info where id=? and money=? and date_time=?);"
                 << bt.id << bt.money << bt.date_time >> exists;
 
         return exists;
@@ -403,7 +402,20 @@ bool SqliteDataBaseService<BudgetInfo, std::size_t>::exists(const BudgetInfo &bt
     } SQLITE_DEFAULT_EXCEPTION
 }
 
-const BudgetInfo &SqliteDataBaseService<BudgetInfo, std::size_t>::get(const size_t &id) noexcept(false) {
+bool SqliteDataBaseService<BudgetInfo, std::size_t>::existsBetweenDatesById(std::size_t id, const std::string &from,
+                                                                            const std::string &to) noexcept(false) {
+    try {
+        bool exists;
+        SqliteDataBaseConnector::get()
+                << "select exists(select * from budget_info where id=? and where date_time between ? and ?);"
+                << id << from << to >> exists;
+
+        return exists;
+
+    } SQLITE_DEFAULT_EXCEPTION
+}
+
+BudgetInfo SqliteDataBaseService<BudgetInfo, std::size_t>::get(const size_t &id) noexcept(false) {
     try {
         BudgetInfo budget_info;
         SqliteDataBaseConnector::get()
@@ -452,7 +464,7 @@ std::size_t SqliteDataBaseService<BudgetInfo, std::size_t>::getRowsQuantity() no
     } SQLITE_DEFAULT_EXCEPTION
 }
 
-const std::vector<BudgetInfo> SqliteDataBaseService<BudgetInfo, std::size_t>::getAll(const size_t &id) noexcept(false) {
+std::vector<BudgetInfo> SqliteDataBaseService<BudgetInfo, std::size_t>::getAll(const size_t &id) noexcept(false) {
     try {
         std::vector<BudgetInfo> budget_infos;
         SqliteDataBaseConnector::get()
@@ -492,7 +504,7 @@ void SqliteDataBaseService<Permission, std::size_t>::drop() noexcept(false) {
 void SqliteDataBaseService<Permission, std::size_t>::insert(const Permission &bt) noexcept(false) {
     try {
         SqliteDataBaseConnector::get()
-                << "insert into permission (user_id, password) values(?, ?);"
+                << "insert into permission (user_id,password) values(?,?);"
                 << bt.user_id
                 << bt.password;
 
@@ -518,7 +530,7 @@ bool SqliteDataBaseService<Permission, std::size_t>::exists(const size_t &id) no
     try {
         bool exists;
         SqliteDataBaseConnector::get()
-                << "select exists(select * from permission where user_id=?) "
+                << "select exists(select * from permission where user_id=?);"
                 << id >> exists;
 
         return exists;
@@ -530,7 +542,7 @@ bool SqliteDataBaseService<Permission, std::size_t>::exists(const Permission &bt
     try {
         bool exists;
         SqliteDataBaseConnector::get()
-                << "select exists(select * from permission where user_id=? and password=?)"
+                << "select exists(select * from permission where user_id=? and password=?);"
                 << bt.user_id << bt.password >> exists;
 
         return exists;
@@ -538,7 +550,7 @@ bool SqliteDataBaseService<Permission, std::size_t>::exists(const Permission &bt
     } SQLITE_DEFAULT_EXCEPTION
 }
 
-const std::vector<Permission> SqliteDataBaseService<Permission, std::size_t>::getAll(const size_t &id) noexcept(false) {
+std::vector<Permission> SqliteDataBaseService<Permission, std::size_t>::getAll(const size_t &id) noexcept(false) {
     try {
         std::vector<Permission> permissions;
         SqliteDataBaseConnector::get()
@@ -551,11 +563,11 @@ const std::vector<Permission> SqliteDataBaseService<Permission, std::size_t>::ge
     } SQLITE_DEFAULT_EXCEPTION
 }
 
-const Permission &SqliteDataBaseService<Permission, std::size_t>::get(const size_t &id) noexcept(false) {
+Permission SqliteDataBaseService<Permission, std::size_t>::get(const size_t &id) noexcept(false) {
     try {
         Permission permission;
         SqliteDataBaseConnector::get()
-                << "select * from permission where user_id=? order by column desc limit 1;"
+                << "select * from permission where user_id=?;"
                 << id
                 >> [&](std::size_t user_id, std::string password) {
                     permission.user_id = user_id;

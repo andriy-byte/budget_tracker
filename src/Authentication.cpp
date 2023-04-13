@@ -9,11 +9,13 @@ Authentication::Authentication(const std::string &user_name, const std::string &
 Login::Login(const std::string &user_name, const std::string &password) : Authentication(user_name, password) {}
 
 bool Login::isPasswordCorrect() const {
+
+    std::string salted_password = SqliteDataBaseService<Permission, std::size_t>::getInstance().get(
+            SqliteDataBaseService<User, std::size_t>::getInstance().getId(this->user_name)
+    ).password;
+
     return Authorization::isCorrect(
-            this->password,
-            SqliteDataBaseService<Permission, std::size_t>::getInstance().get(
-                    SqliteDataBaseService<User, std::size_t>::getInstance().getId(this->user_name)
-            ).password
+            this->password, salted_password
     );
 
 }

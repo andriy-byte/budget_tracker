@@ -28,7 +28,9 @@ add_executable(budget_tracker main.cpp
         src/Attempt.cpp
         src/Attempt.h
         src/Datetime.cpp
-        src/Datetime.h)
+        src/Datetime.h
+        src/HiddenInput.cpp
+        src/HiddenInput.h)
 
 
 if (WIN32)

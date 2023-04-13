@@ -18,7 +18,7 @@ class Authorization final {
 public:
     static std::string encrypt(const std::string &password);
 
-    static bool isCorrect(const std::string &password, const std::string hash);
+    static bool isCorrect(const std::string &password, const std::string &hash);
 
 private:
     static std::string toHash(const std::string &value);

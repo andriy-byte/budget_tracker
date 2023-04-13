@@ -43,7 +43,7 @@ public:
 
     void update(const size_t &id, const User &bt) noexcept(false) override;
 
-    const User &get(const size_t &id) noexcept(false) override;
+    User get(const size_t &id) noexcept(false) override;
 
     void erase(const size_t &id) noexcept(false) override;
 
@@ -59,10 +59,10 @@ public:
 
     bool existsByName(const std::string &name) noexcept(false);
 
+    std::vector<User> getAll(const size_t &id) noexcept(false) override;
 
     SqliteDataBaseService() = default;
 
-    const std::vector<User> getAll(const size_t &id) noexcept(false) override;
 
 
 };
@@ -90,7 +90,7 @@ public:
 
     void update(const size_t &id, const BudgetGroup &bt) noexcept(false) override;
 
-    const BudgetGroup &get(const size_t &id) noexcept(false) override;
+    BudgetGroup get(const size_t &id) noexcept(false) override;
 
     void erase(const size_t &id) noexcept(false) override;
 
@@ -98,7 +98,7 @@ public:
 
     std::size_t getRowsQuantity() noexcept(false) override;
 
-    const std::vector<BudgetGroup> getAll(const size_t &id) noexcept(false) override;
+    std::vector<BudgetGroup> getAll(const size_t &id) noexcept(false) override;
 
     SqliteDataBaseService() = default;
 
@@ -127,7 +127,7 @@ public:
 
     void update(const size_t &id, const BudgetInfo &bt) noexcept(false) override;
 
-    const BudgetInfo &get(const size_t &id) noexcept(false) override;
+    BudgetInfo get(const size_t &id) noexcept(false) override;
 
     void erase(const size_t &id) noexcept(false) override;
 
@@ -135,10 +135,12 @@ public:
 
     std::size_t getRowsQuantity() noexcept(false) override;
 
-    const std::vector<BudgetInfo> getAll(const size_t &id) noexcept(false) override;
+    std::vector<BudgetInfo> getAll(const size_t &id) noexcept(false) override;
 
-    const std::vector<BudgetInfo>
+    std::vector<BudgetInfo>
     getBetweenDatesById(std::size_t id, const std::string &from, const std::string &to) noexcept(false);
+
+    bool existsBetweenDatesById(std::size_t id, const std::string &from, const std::string &to) noexcept(false);
 
     SqliteDataBaseService() = default;
 
@@ -163,7 +165,7 @@ public:
 
     void update(const size_t &id, const Permission &bt) noexcept(false) override;
 
-    const Permission &get(const size_t &id) noexcept(false) override;
+    Permission get(const size_t &id) noexcept(false) override;
 
     void erase(const size_t &id) noexcept(false) override;
 
@@ -171,7 +173,7 @@ public:
 
     std::size_t getRowsQuantity() noexcept(false) override;
 
-    const std::vector<Permission> getAll(const size_t &id) noexcept(false) override;
+    std::vector<Permission> getAll(const size_t &id) noexcept(false) override;
 
     bool exists(const size_t &id) noexcept(false) override;
 

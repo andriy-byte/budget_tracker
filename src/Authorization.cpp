@@ -31,6 +31,6 @@ std::string Authorization::encrypt(const std::string &password) {
 
 }
 
-bool Authorization::isCorrect(const std::string &password, const std::string hash) {
+bool Authorization::isCorrect(const std::string &password, const std::string &hash) {
     return toHash(password) == hash;
 }
