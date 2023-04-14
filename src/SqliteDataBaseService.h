@@ -64,7 +64,6 @@ public:
     SqliteDataBaseService() = default;
 
 
-
 };
 
 template<>
@@ -138,9 +137,9 @@ public:
     std::vector<BudgetInfo> getAll(const size_t &id) noexcept(false) override;
 
     std::vector<BudgetInfo>
-    getBetweenDatesById(std::size_t id, const std::string &from, const std::string &to) noexcept(false);
+    getBetweenDatesById(const std::size_t &id, const std::string &from, const std::string &to) noexcept(false);
 
-    bool existsBetweenDatesById(std::size_t id, const std::string &from, const std::string &to) noexcept(false);
+    bool existsBetweenDatesById(const std::size_t &id, const std::string &from, const std::string &to) noexcept(false);
 
     SqliteDataBaseService() = default;
 

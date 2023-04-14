@@ -11,7 +11,7 @@ void Datetime::setFormat(const std::string &format) {
 }
 
 Datetime::Datetime() {
-    this->setFormat("%d-%m-%Y");
+    this->setFormat("%Y-%m-%d");
 }
 
 Datetime::Datetime(const std::string &format) : format(format) {}
