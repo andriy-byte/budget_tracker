@@ -3,6 +3,8 @@
 
 int main(){
 
-    Session::run();
+    Session session;
+    session.run();
+
     return 0;
 }

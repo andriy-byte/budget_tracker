@@ -28,7 +28,16 @@ namespace session_info {
 
 class Session {
 public:
-    static void run();
+    void run();
+
+private:
+    using sql_user = SqliteDataBaseService<User, std::size_t>;
+    using sql_permission = SqliteDataBaseService<Permission, std::size_t>;
+    using sql_budget_group = SqliteDataBaseService<BudgetGroup, std::size_t>;
+    using sql_budget_info = SqliteDataBaseService<BudgetInfo, std::size_t>;
+
+    void dataBaseConnect();
+
 };
 
 

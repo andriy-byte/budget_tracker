@@ -360,23 +360,6 @@ void SqliteDataBaseService<BudgetInfo, std::size_t>::update(const size_t &id, co
 
 }
 
-std::vector<BudgetInfo> SqliteDataBaseService<BudgetInfo, std::size_t>::getBetweenDatesById(const std::size_t &id,
-                                                                                            const std::string &from,
-                                                                                            const std::string &to) noexcept(false) {
-    try {
-        std::vector<BudgetInfo> budget_infos;
-        SqliteDataBaseConnector::get()
-                << "select * from budget_info where id_ =? and date(date_time) >= date(?) and date(date_time) <= date(?);"
-                << id
-                << from
-                << to
-                >> [&](std::vector<BudgetInfo> budget_infos_) {
-                    budget_infos = std::move(budget_infos_);
-                };
-
-        return budget_infos;
-    } SQLITE_DEFAULT_EXCEPTION
-}
 
 bool SqliteDataBaseService<BudgetInfo, std::size_t>::exists(const size_t &id) noexcept(false) {
     try {
@@ -396,20 +379,6 @@ bool SqliteDataBaseService<BudgetInfo, std::size_t>::exists(const BudgetInfo &bt
         SqliteDataBaseConnector::get()
                 << "select exists(select * from budget_info where id_ =? and money=? and date_time=?);"
                 << bt.id << bt.money << bt.date_time >> exists;
-
-        return exists;
-
-    } SQLITE_DEFAULT_EXCEPTION
-}
-
-bool
-SqliteDataBaseService<BudgetInfo, std::size_t>::existsBetweenDatesById(const std::size_t &id, const std::string &from,
-                                                                       const std::string &to) noexcept(false) {
-    try {
-        bool exists;
-        SqliteDataBaseConnector::get()
-                << "select exists(select * from budget_info where id_ =? and date(date_time) >= date(?) and date(date_time) <= date(?);"
-                << id << from << to >> exists;
 
         return exists;
 
